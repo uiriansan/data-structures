@@ -73,7 +73,7 @@ typedef struct DS_LL_DoublyList DS_LL_DoublyList;
 }
 #endif
 
-// #ifdef DS_LL_IMPLEMENTATION
+#ifdef DS_LL_IMPLEMENTATION
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -104,6 +104,9 @@ static inline DS_LL_SinglyList *ds_ll_singly_create() {
 }
 
 static inline size_t ds_ll_singly_free(DS_LL_SinglyList *list) {
+    if (list == NULL)
+        return 0;
+
     size_t i = 0;
     DS_LL_SinglyNode *p = list->head;
     while (p != NULL) {
@@ -212,36 +215,42 @@ static inline DS_LL_SinglyArray *ds_ll_singly_find_all(DS_LL_SinglyList *list, c
         return NULL;
 
     DS_LL_SinglyNode *p = list->head;
-    DS_LL_SinglyArray *result = (DS_LL_SinglyArray *)malloc(sizeof(DS_LL_SinglyArray));
-    if (result == NULL)
+    DS_LL_SinglyArray *arr = (DS_LL_SinglyArray *)malloc(sizeof(DS_LL_SinglyArray));
+    if (arr == NULL)
         return NULL;
 
     size_t capacity = 3;
 
-    result->nodes = (DS_LL_SinglyNode **)malloc(capacity * sizeof(DS_LL_SinglyNode *));
-    if (result->nodes == NULL)
+    arr->nodes = (DS_LL_SinglyNode **)malloc(capacity * sizeof(DS_LL_SinglyNode *));
+    if (arr->nodes == NULL) {
+        free(arr);
         return NULL;
-    result->size = 0;
+    }
+    arr->size = 0;
 
     while (p != NULL) {
         if (strcmp(p->data, data) == 0) {
-            if (result->size + 1 > capacity) {
+            if (arr->size + 1 > capacity) {
                 capacity += 3;
-                result->nodes = (DS_LL_SinglyNode **)realloc(result->nodes, capacity * sizeof(DS_LL_SinglyNode *));
-                if (result->nodes == NULL)
+                arr->nodes = (DS_LL_SinglyNode **)realloc(arr->nodes, capacity * sizeof(DS_LL_SinglyNode *));
+                if (arr->nodes == NULL) {
+                    free(arr);
                     return NULL;
+                }
             }
-            result->nodes[result->size] = p;
-            result->size++;
+            arr->nodes[arr->size] = p;
+            arr->size++;
         }
         p = p->next;
     }
-    return result;
+    return arr;
 }
 
-static inline void ds_ll_singly_free_array(DS_LL_SinglyArray *result) {
-    free(result->nodes);
-    free(result);
+static inline void ds_ll_singly_free_array(DS_LL_SinglyArray *array) {
+    if (array == NULL)
+        return;
+    free(array->nodes);
+    free(array);
 }
 
 static inline size_t ds_ll_singly_remove_node(DS_LL_SinglyList **list, DS_LL_SinglyNode *node) {
@@ -327,11 +336,11 @@ static inline char *ds_ll_singly_join(DS_LL_SinglyList *list, char *separator) {
         if (p->next != NULL)
             ds_sb_append(sb, separator);
     }
-    char *str = (char *)malloc(sizeof(sb->data));
+    char *str;
     if (sb->data == NULL)
-        strcpy(str, "");
+        str = strdup("");
     else
-        strcpy(str, sb->data);
+        str = strdup(sb->data);
 
     ds_sb_free(sb);
     return str;

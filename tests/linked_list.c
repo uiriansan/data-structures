@@ -28,18 +28,18 @@ int main(int argc, char **argv) {
     }
     ds_ll_singly_print(list);
     DS_LL_SinglyArray *arr = ds_ll_singly_find_all(list, "x");
-    assert(arr->size == 1 && "X: array size not equals to 1.");
+    assert(arr && arr->size == 1 && "X: array size not equals to 1.");
     ds_ll_singly_free_array(arr);
 
     ds_ll_singly_append(&list, "x");
     ds_ll_singly_print(list);
     arr = ds_ll_singly_find_all(list, "x");
-    assert(arr != NULL && arr->size == 2 && "X: array size not equals to 2.");
+    assert(arr && arr->size == 2 && "X: array size not equals to 2.");
     ds_ll_singly_free_array(arr);
 
-    const char *expected_res = "a - b - c - d - e - f - g - h - i - j - k - l - m - n - o - p - q - r - s - t - u - v - w - x - y - z";
-    // assert(strcmp(ds_ll_singly_join(list, " - "), expected_res) == 0 && "ABC: `ds_ll_singly_join()` did not match the expected result.");
-    // assert(ds_ll_singly_free(list) == strlen(abc) && "ABC: incorrect # of freed elements.");
+    const char *expected_res = "a - b - c - d - e - f - g - h - i - j - k - l - m - n - o - p - q - r - s - t - u - v - w - x - y - z - x";
+    assert(strcmp(ds_ll_singly_join(list, " - "), expected_res) == 0 && "ABC: `ds_ll_singly_join()` did not match the expected result.");
+    assert(ds_ll_singly_free(list) == strlen(abc) + 1 && "ABC: incorrect # of freed elements.");
 
     return 0;
 }
