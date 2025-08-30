@@ -1,6 +1,6 @@
 CC=gcc
-FLAGS=-Wall -ggdb
 SRC_DIR=src
+FLAGS=-Wall -ggdb
 TEST_DIR=tests
 BUILD_DIR=build/bin
 T_BUILD_DIR=build/tests

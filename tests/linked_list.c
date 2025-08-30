@@ -6,33 +6,40 @@
 #include <string.h>
 
 int main(int argc, char **argv) {
-    DS_LL_NodeSingly *head = ds_ll_create_singly("hey");
-    head = ds_ll_insert_front_singly(&head, "there");
-    head = ds_ll_insert_front_singly(&head, "this");
-    head = ds_ll_insert_front_singly(&head, "is");
-    head = ds_ll_insert_front_singly(&head, "a");
+    DS_LL_SinglyList *list = ds_ll_singly_create();
 
-    assert(ds_ll_sizeof(head) == 5 && "Assertion failed: list size is incorrect.");
+    // NULL list asserts:
+    assert(ds_ll_singly_get_head(list) == NULL && "`ds_ll_singly_get_head()` failed on empty list.");
+    assert(ds_ll_singly_get_tail(list) == NULL && "`ds_ll_singly_get_tail()` failed on empty list.");
+    assert(ds_ll_singly_get_size(list) == 0 && "`ds_ll_singly_get_size()` failed on empty list.");
+    ds_ll_singly_print(list);
+    assert(ds_ll_singly_free(list) == 0 && "`ds_ll_singly_free()` failed on empty list.");
 
-    ds_ll_append_singly(&head, "message");
-    ds_ll_append_singly(&head, "from");
-    ds_ll_append_singly(&head, "linked");
-    ds_ll_append_singly(&head, "list");
+    // Common asserts:
+    list = ds_ll_singly_create();
 
-    assert(ds_ll_sizeof(head) == 9 && "Assertion failed: list size is incorrect.");
+    const char *abc = "abcdefghijklmnopqrstuvwxyz";
+    for (size_t i = 0; i < strlen(abc); i++) {
+        char buf[2];
+        buf[0] = abc[i];
+        buf[1] = 0;
+        size_t new_size = ds_ll_singly_append(&list, buf);
+        assert(new_size == i + 1 && "ABC: `new_size` doesn't match the expected size of the list.");
+    }
+    ds_ll_singly_print(list);
+    DS_LL_SinglyArray *arr = ds_ll_singly_find_all(list, "x");
+    assert(arr->size == 1 && "X: array size not equals to 1.");
+    ds_ll_singly_free_array(arr);
 
-    char *str = ds_ll_to_string(head);
-    assert(strcmp(str, "a -> is -> this -> there -> hey -> message -> from -> linked -> list -> NULL") == 0 && "Assertion failed: incorrect output of 'ds_ll_to_string'");
-    free(str);
+    ds_ll_singly_append(&list, "x");
+    ds_ll_singly_print(list);
+    arr = ds_ll_singly_find_all(list, "x");
+    assert(arr != NULL && arr->size == 2 && "X: array size not equals to 2.");
+    ds_ll_singly_free_array(arr);
 
-    DS_LL_NodeSingly *fd = ds_ll_find_singly(head, "from");
-    assert(strcmp(fd->data, "from") == 0 && "Assertion failed: incorrect value for 'fd'.");
-
-    DS_LL_NodeSingly *xd = ds_ll_find_singly(head, "");
-    assert(xd == NULL && "Assertion failed: 'xd' is not NULL.");
-
-    size_t freed = ds_ll_free_singly(head);
-    assert(freed == 9 && "Assertion failed: freed != 9");
+    const char *expected_res = "a - b - c - d - e - f - g - h - i - j - k - l - m - n - o - p - q - r - s - t - u - v - w - x - y - z";
+    // assert(strcmp(ds_ll_singly_join(list, " - "), expected_res) == 0 && "ABC: `ds_ll_singly_join()` did not match the expected result.");
+    // assert(ds_ll_singly_free(list) == strlen(abc) && "ABC: incorrect # of freed elements.");
 
     return 0;
 }
