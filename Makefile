@@ -1,11 +1,11 @@
 CC=gcc
-FLAGS=-Wall -g
+FLAGS=-Wall -ggdb
 SRC_DIR=src
 TEST_DIR=tests
 BUILD_DIR=build/bin
 T_BUILD_DIR=build/tests
 
-.PHONY: all test clean
+.PHONY: all clean
 
 SRCS=$(wildcard $(SRC_DIR)/*.c)
 OBJS=$(patsubst $(SRC_DIR)/%.c,$(BUILD_DIR)/%,$(SRCS))
@@ -13,7 +13,7 @@ OBJS=$(patsubst $(SRC_DIR)/%.c,$(BUILD_DIR)/%,$(SRCS))
 T_SRCS=$(wildcard $(TEST_DIR)/*.c)
 T_OBJS=$(patsubst $(TEST_DIR)/%.c,$(T_BUILD_DIR)/%,$(T_SRCS))
 
-all: $(OBJS)
+all: $(OBJS) test
 
 $(BUILD_DIR)/%: $(SRC_DIR)/%.c
 	@mkdir -p $(BUILD_DIR)

@@ -14,10 +14,10 @@ int main(int argc, char **argv) {
 
     assert(ds_ll_sizeof(head) == 5 && "Assertion failed: list size is incorrect.");
 
-    ds_ll_insert_singly(&head, "message");
-    ds_ll_insert_singly(&head, "from");
-    ds_ll_insert_singly(&head, "linked");
-    ds_ll_insert_singly(&head, "list");
+    ds_ll_append_singly(&head, "message");
+    ds_ll_append_singly(&head, "from");
+    ds_ll_append_singly(&head, "linked");
+    ds_ll_append_singly(&head, "list");
 
     assert(ds_ll_sizeof(head) == 9 && "Assertion failed: list size is incorrect.");
 

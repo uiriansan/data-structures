@@ -16,23 +16,19 @@
 extern "C" {
 #endif
 
-// Struct representing nodes for singly linked lists.
 typedef struct DS_LL_NodeSingly DS_LL_NodeSingly;
-// Struct representing nodes for doubly linked lists.
 typedef struct DS_LL_NodeDoubly DS_LL_NodeDoubly;
-// Create and return a singly node for the given data with `next` pointing to NULL (head) if the data provided is not NULL.
-static DS_LL_NodeSingly *ds_ll_create_singly(char *data);
-// Create and return a doubly node for the given data with both `prev` and `next` pointing to NULL (head) if the data provided is not NULL.
-static DS_LL_NodeDoubly *ds_ll_create_doubly(char *data);
+static inline DS_LL_NodeSingly *ds_ll_create_singly(char *data);
+static inline DS_LL_NodeDoubly *ds_ll_create_doubly(char *data);
 
-static char *ds_ll_to_string(void *head);
-static void ds_ll_print(void *head);
-static size_t ds_ll_sizeof(void *head);
-static DS_LL_NodeSingly *ds_ll_insert_front_singly(DS_LL_NodeSingly **head, char *data);
-static DS_LL_NodeSingly *ds_ll_get_tail_singly(DS_LL_NodeSingly *head);
-static DS_LL_NodeSingly *ds_ll_insert_singly(DS_LL_NodeSingly **head, char *data);
-static size_t ds_ll_free_singly(DS_LL_NodeSingly *head);
-static DS_LL_NodeSingly *ds_ll_find_singly(DS_LL_NodeSingly *head, char *data);
+static inline char *ds_ll_to_string(void *head);
+static inline void ds_ll_print(void *head);
+static inline size_t ds_ll_sizeof(void *head);
+static inline DS_LL_NodeSingly *ds_ll_insert_front_singly(DS_LL_NodeSingly **head, char *data);
+static inline DS_LL_NodeSingly *ds_ll_get_tail_singly(DS_LL_NodeSingly *head);
+static inline DS_LL_NodeSingly *ds_ll_append_singly(DS_LL_NodeSingly **head, char *data);
+static inline size_t ds_ll_free_singly(DS_LL_NodeSingly *head);
+static inline DS_LL_NodeSingly *ds_ll_find_singly(DS_LL_NodeSingly *head, char *data);
 
 #ifdef __cplusplus
 }
@@ -55,7 +51,7 @@ struct DS_LL_NodeDoubly {
     DS_LL_NodeDoubly *prev;
 };
 
-static char *ds_ll_to_string(void *head) {
+static inline char *ds_ll_to_string(void *head) {
     DS_LL_NodeSingly *p;
     DS_SB_StringBuffer *sb = ds_sb_create();
 
@@ -71,13 +67,13 @@ static char *ds_ll_to_string(void *head) {
     return str;
 }
 
-static void ds_ll_print(void *head) {
+static inline void ds_ll_print(void *head) {
     char *str = ds_ll_to_string(head);
     printf("%s\n", str);
     free(str);
 }
 
-static size_t ds_ll_sizeof(void *head) {
+static inline size_t ds_ll_sizeof(void *head) {
     DS_LL_NodeSingly *p;
     size_t i = 0;
     for (p = (DS_LL_NodeSingly *)head; p != NULL; p = p->next) {
@@ -86,26 +82,26 @@ static size_t ds_ll_sizeof(void *head) {
     return i;
 }
 
-static DS_LL_NodeSingly *ds_ll_create_singly(char *data) {
+static inline DS_LL_NodeSingly *ds_ll_create_singly(char *data) {
     if (data == NULL)
         return NULL;
     DS_LL_NodeSingly *head = (DS_LL_NodeSingly *)malloc(sizeof(DS_LL_NodeSingly));
-    head->data = data;
+    head->data = strdup(data);
     head->next = NULL;
     return head;
 }
 
-static DS_LL_NodeDoubly *ds_ll_create_doubly(char *data) {
+static inline DS_LL_NodeDoubly *ds_ll_create_doubly(char *data) {
     if (data == NULL)
         return NULL;
     DS_LL_NodeDoubly *head = (DS_LL_NodeDoubly *)malloc(sizeof(DS_LL_NodeDoubly));
-    head->data = data;
+    head->data = strdup(data);
     head->next = NULL;
     head->prev = NULL;
     return head;
 }
 
-static DS_LL_NodeSingly *ds_ll_insert_front_singly(DS_LL_NodeSingly **head, char *data) {
+static inline DS_LL_NodeSingly *ds_ll_insert_front_singly(DS_LL_NodeSingly **head, char *data) {
     if (data == NULL || head == NULL)
         return NULL;
     DS_LL_NodeSingly *new_head = ds_ll_create_singly(data);
@@ -113,10 +109,7 @@ static DS_LL_NodeSingly *ds_ll_insert_front_singly(DS_LL_NodeSingly **head, char
     return new_head;
 }
 
-static DS_LL_NodeSingly *ds_ll_get_tail_singly(DS_LL_NodeSingly *head) {
-    if (head == NULL)
-        return NULL;
-
+static inline DS_LL_NodeSingly *ds_ll_get_tail_singly(DS_LL_NodeSingly *head) {
     DS_LL_NodeSingly *p = head;
     while (p->next != NULL) {
         p = p->next;
@@ -124,7 +117,7 @@ static DS_LL_NodeSingly *ds_ll_get_tail_singly(DS_LL_NodeSingly *head) {
     return p;
 }
 
-static DS_LL_NodeSingly *ds_ll_insert_singly(DS_LL_NodeSingly **head, char *data) {
+static inline DS_LL_NodeSingly *ds_ll_append_singly(DS_LL_NodeSingly **head, char *data) {
     DS_LL_NodeSingly *p = ds_ll_get_tail_singly(*head);
     if (p == NULL)
         return NULL;
@@ -134,11 +127,12 @@ static DS_LL_NodeSingly *ds_ll_insert_singly(DS_LL_NodeSingly **head, char *data
     return node;
 }
 
-static size_t ds_ll_free_singly(DS_LL_NodeSingly *head) {
+static inline size_t ds_ll_free_singly(DS_LL_NodeSingly *head) {
     size_t i = 0;
     DS_LL_NodeSingly *p = head;
     while (p != NULL) {
         DS_LL_NodeSingly *tmp = p->next;
+        free(p->data);
         free(p);
         p = tmp;
         i++;
@@ -146,18 +140,17 @@ static size_t ds_ll_free_singly(DS_LL_NodeSingly *head) {
     return i;
 }
 
-static DS_LL_NodeSingly *ds_ll_find_singly(DS_LL_NodeSingly *head, char *data) {
-    if (head == NULL)
+static inline DS_LL_NodeSingly *ds_ll_find_singly(DS_LL_NodeSingly *head, char *data) {
+    if (data == NULL)
         return NULL;
 
     DS_LL_NodeSingly *p = head;
-    if (strcmp(p->data, data) == 0)
-        return p;
-
-    if (p->next == NULL)
-        return NULL;
-
-    return ds_ll_find_singly(p->next, data);
+    while (p != NULL) {
+        if (strcmp(p->data, data) == 0)
+            return p;
+        p = p->next;
+    }
+    return NULL;
 }
 
 #endif // DS_LL_IMPLEMENTATION

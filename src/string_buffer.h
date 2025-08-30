@@ -15,15 +15,16 @@ extern "C" {
 #endif
 
 typedef struct DS_SB_StringBuffer DS_SB_StringBuffer;
-static DS_SB_StringBuffer *ds_sb_create();
-static void ds_sb_free(DS_SB_StringBuffer *sb);
-static void ds_sb_append(DS_SB_StringBuffer *sb, char *str);
+static inline DS_SB_StringBuffer *ds_sb_create();
+static inline void ds_sb_free(DS_SB_StringBuffer *sb);
+static inline void ds_sb_append(DS_SB_StringBuffer *sb, char *str);
 
 #ifdef __cplusplus
 }
 #endif
 
 #ifdef DS_SB_IMPLEMENTATION
+#include <stdint.h>
 #include <stdlib.h>
 
 struct DS_SB_StringBuffer {
@@ -32,7 +33,7 @@ struct DS_SB_StringBuffer {
     size_t capacity;
 };
 
-static DS_SB_StringBuffer *ds_sb_create() {
+static inline DS_SB_StringBuffer *ds_sb_create() {
     DS_SB_StringBuffer *sb = (DS_SB_StringBuffer *)malloc(sizeof(DS_SB_StringBuffer));
     if (sb == NULL)
         return NULL;
@@ -43,14 +44,14 @@ static DS_SB_StringBuffer *ds_sb_create() {
     return sb;
 }
 
-static void ds_sb_free(DS_SB_StringBuffer *sb) {
+static inline void ds_sb_free(DS_SB_StringBuffer *sb) {
     if (sb == NULL)
         return;
     free(sb->data);
     free(sb);
 }
 
-static int ds_sb_ensure_capacity(DS_SB_StringBuffer *sb, size_t required) {
+static inline uint8_t ds_sb_ensure_capacity(DS_SB_StringBuffer *sb, size_t required) {
     if (required <= sb->capacity)
         return 1;
 
@@ -67,7 +68,7 @@ static int ds_sb_ensure_capacity(DS_SB_StringBuffer *sb, size_t required) {
     return 1;
 }
 
-static void ds_sb_append(DS_SB_StringBuffer *sb, char *str) {
+static inline void ds_sb_append(DS_SB_StringBuffer *sb, char *str) {
     if (sb == NULL || str == NULL)
         return;
 
