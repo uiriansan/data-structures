@@ -68,6 +68,7 @@ static inline void ds_ll_singly_print(DS_LL_SinglyList *list);
 
 typedef struct DS_LL_DoublyNode DS_LL_DoublyNode;
 typedef struct DS_LL_DoublyList DS_LL_DoublyList;
+typedef struct DS_LL_DoublyArray DS_LL_DoublyArray;
 
 #ifdef __cplusplus
 }
@@ -78,6 +79,10 @@ typedef struct DS_LL_DoublyList DS_LL_DoublyList;
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+/*
+ * SINGLY LINKED LIST IMPLEMENTATION:
+ */
 
 struct DS_LL_SinglyNode {
     char *data;
@@ -153,24 +158,25 @@ static DS_LL_SinglyNode *create_singly_node(char *data) {
 }
 
 static inline size_t ds_ll_singly_insert_front(DS_LL_SinglyList **list, char *data) {
+    DS_LL_SinglyList *p = *list;
     DS_LL_SinglyNode *new_head = create_singly_node(data);
 
     if (new_head == NULL)
-        return -1;
+        return p->size;
 
-    DS_LL_SinglyList *p = *list;
     new_head->next = p->head;
+    p->head = new_head;
     p->size++;
     return p->size;
 }
 
 static inline size_t ds_ll_singly_append(DS_LL_SinglyList **list, char *data) {
+    DS_LL_SinglyList *lp = *list;
     DS_LL_SinglyNode *node = create_singly_node(data);
 
     if (node == NULL)
-        return -1;
+        return lp->size;
 
-    DS_LL_SinglyList *lp = *list;
     DS_LL_SinglyNode *p = ds_ll_singly_get_tail(lp);
 
     if (p == NULL) {
@@ -185,7 +191,6 @@ static inline size_t ds_ll_singly_append(DS_LL_SinglyList **list, char *data) {
 
 static inline size_t ds_ll_singly_find_node(DS_LL_SinglyList *list, DS_LL_SinglyNode *node) {
     DS_LL_SinglyNode *p;
-    DS_LL_SinglyNode *np = node;
     size_t pos = 0;
 
     for (p = list->head; p != node; p = p->next) {
@@ -261,18 +266,15 @@ static inline size_t ds_ll_singly_remove_node(DS_LL_SinglyList **list, DS_LL_Sin
     while (cur != NULL) {
         if (cur == node) {
             DS_LL_SinglyNode *next = cur->next;
+
+            if (prev != NULL) {
+                prev->next = next;
+            } else {
+                ls->head = next;
+            }
             free(cur->data);
             free(cur);
 
-            if (next != NULL) {
-                if (prev != NULL) {
-                    prev->next = next;
-                } else {
-                    ls->head = next;
-                }
-            } else {
-                ls->head = NULL;
-            }
             ls->size--;
             return ls->size;
         }
@@ -307,22 +309,22 @@ static inline size_t ds_ll_singly_remove_all(DS_LL_SinglyList **list, char *data
     while (cur != NULL) {
         if (strcmp(cur->data, data) == 0) {
             DS_LL_SinglyNode *next = cur->next;
+
+            if (prev != NULL) {
+                prev->next = next;
+            } else {
+                ls->head = next;
+            }
             free(cur->data);
             free(cur);
 
-            if (next != NULL) {
-                if (prev != NULL) {
-                    prev->next = next;
-                } else {
-                    ls->head = next;
-                }
-            } else {
-                ls->head = NULL;
-            }
             ls->size--;
+
+            cur = next;
+        } else {
+            prev = cur;
+            cur = cur->next;
         }
-        prev = cur;
-        cur = cur->next;
     }
     return ls->size;
 }
@@ -330,17 +332,28 @@ static inline size_t ds_ll_singly_remove_all(DS_LL_SinglyList **list, char *data
 static inline char *ds_ll_singly_join(DS_LL_SinglyList *list, char *separator) {
     DS_LL_SinglyNode *p;
     DS_SB_StringBuffer *sb = ds_sb_create();
+    if (sb == NULL)
+        return NULL;
 
     for (p = list->head; p != NULL; p = p->next) {
         ds_sb_append(sb, p->data);
         if (p->next != NULL)
             ds_sb_append(sb, separator);
     }
-    char *str;
+    if (sb->data == NULL || sb->size == 0) {
+        ds_sb_free(sb);
+        return NULL;
+    }
+
+    char *str = (char *)malloc(strlen(sb->data) + 1);
+    if (str == NULL) {
+        ds_sb_free(sb);
+        return NULL;
+    }
     if (sb->data == NULL)
-        str = strdup("");
+        strcpy(str, "");
     else
-        str = strdup(sb->data);
+        strcpy(str, sb->data);
 
     ds_sb_free(sb);
     return str;
@@ -348,12 +361,18 @@ static inline char *ds_ll_singly_join(DS_LL_SinglyList *list, char *separator) {
 
 static inline void ds_ll_singly_print(DS_LL_SinglyList *list) {
     char *str = ds_ll_singly_join(list, (char *)" -> ");
+    if (str == NULL)
+        return;
     if (strcmp(str, "") == 0)
         printf("NULL\n");
     else
         printf("%s -> NULL\n", str);
     free(str);
 }
+
+/*
+ * DOUBLY LINKED LIST IMPLEMENTATION:
+ */
 
 #endif // DS_LL_IMPLEMENTATION
 #endif // DS_LL_H_
