@@ -1,5 +1,5 @@
-#define DS_LL_IMPLEMENTATION
-#include "../src/linked_list.h"
+#define DS_LL_SINGLY_IMPLEMENTATION
+#include "../src/linked_list_singly.h"
 #include <assert.h>
 #include <stddef.h>
 #include <stdio.h>

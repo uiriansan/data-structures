@@ -9,11 +9,17 @@ extern "C" {
 
 #define DS_DA_INITIAL_CAPACITY 3
 
+// An array that dynamically grows as you add elements to it.
 typedef struct DS_DynamicArray DS_DynamicArray;
+// Create a dynamic array array and returns it.
 static inline DS_DynamicArray *ds_da_create();
+// Append an element to the end of the array.
 static inline int ds_da_append(DS_DynamicArray *arr, char *str);
+// Remove all the elements from the array and free the memory allocated by them.
 static inline int ds_da_free(DS_DynamicArray *arr);
+// Print the contents of the array.
 static inline void ds_da_print(DS_DynamicArray *arr);
+// Remove and element from the array by its index.
 static inline int ds_da_remove(DS_DynamicArray *arr, int index);
 
 // I've implemented other relevant functions for arrays in linked_list.h.
@@ -36,6 +42,9 @@ struct DS_DynamicArray {
 
 static inline DS_DynamicArray *ds_da_create() {
     DS_DynamicArray *arr = (DS_DynamicArray *)malloc(sizeof(DS_DynamicArray));
+    if (arr == NULL)
+        return NULL;
+
     arr->_capacity = DS_DA_INITIAL_CAPACITY;
     arr->data = (char **)malloc(arr->_capacity * sizeof(char *));
     arr->length = 0;

@@ -1,5 +1,5 @@
-#ifndef DS_LL_H_
-#define DS_LL_H_
+#ifndef DS_LL_SINGLY_H_
+#define DS_LL_SINGLY_H_
 
 /*
  * http://cslibrary.stanford.edu/103/LinkedListBasics.pdf
@@ -16,10 +16,6 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-/*
- * SINGLY LINKED LIST:
- */
 
 // A node of `DS_LL_SinglyList`.
 typedef struct DS_LL_SinglyNode DS_LL_SinglyNode;
@@ -62,27 +58,15 @@ static inline char *ds_ll_singly_join(DS_LL_SinglyList *list, char *separator);
 // Prints the contents of the list.
 static inline void ds_ll_singly_print(DS_LL_SinglyList *list);
 
-/*
- * DOUBLY LINKED LIST:
- */
-
-typedef struct DS_LL_DoublyNode DS_LL_DoublyNode;
-typedef struct DS_LL_DoublyList DS_LL_DoublyList;
-typedef struct DS_LL_DoublyArray DS_LL_DoublyArray;
-
 #ifdef __cplusplus
 }
 #endif
 
-#ifdef DS_LL_IMPLEMENTATION
+#ifdef DS_LL_SINGLY_IMPLEMENTATION
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-/*
- * SINGLY LINKED LIST IMPLEMENTATION:
- */
 
 struct DS_LL_SinglyNode {
     char *data;
@@ -369,10 +353,5 @@ static inline void ds_ll_singly_print(DS_LL_SinglyList *list) {
         printf("%s -> NULL\n", str);
     free(str);
 }
-
-/*
- * DOUBLY LINKED LIST IMPLEMENTATION:
- */
-
-#endif // DS_LL_IMPLEMENTATION
-#endif // DS_LL_H_
+#endif // DS_LL_SINGLY_IMPLEMENTATION
+#endif // DS_LL_SINGLY_H_

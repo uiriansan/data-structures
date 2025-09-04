@@ -1,11 +1,10 @@
 > [!WARNING]
-> I wrote this code exclusively for learning purposes. It's not the prettiest implementation.
+> I wrote this code exclusively for learning purposes. The implementations are simplified and inconsistent.
 
 - [X] Dynamic array;
-- [ ] Linked Lists:
+- [X] Linked Lists:
     - [X] Singly;
-    - [ ] Doubly;
-    - [ ] Circular;
+    - [X] Doubly;
 - [ ] Queue:
     - [ ] Standard;
     - [ ] Deque;
