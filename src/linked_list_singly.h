@@ -35,9 +35,9 @@ static inline DS_LL_SinglyNode *ds_ll_singly_get_head(DS_LL_SinglyList *list);
 // Returns the tail of a singly linked list or NULL if empty.
 static inline DS_LL_SinglyNode *ds_ll_singly_get_tail(DS_LL_SinglyList *list);
 // Takes a singly linked list and a string and inserts a new node containing the string at the front of the list, returning a the size of the list after the operation.
-static inline size_t ds_ll_singly_insert_front(DS_LL_SinglyList **list, char *data);
+static inline size_t ds_ll_singly_insert_front(DS_LL_SinglyList *list, char *data);
 // Takes a singly linked list and a string and inserts a new node containing the string at the end of the list, returning a the size of the list after the operation.
-static inline size_t ds_ll_singly_append(DS_LL_SinglyList **list, char *data);
+static inline size_t ds_ll_singly_append(DS_LL_SinglyList *list, char *data);
 // returns the position of a node in the list, or -1.
 static inline size_t ds_ll_singly_find_node(DS_LL_SinglyList *list, DS_LL_SinglyNode *node);
 // Finds and returns the first node that contains the data, or NULL.
@@ -48,11 +48,11 @@ static inline DS_LL_SinglyArray *ds_ll_singly_find_all(DS_LL_SinglyList *list, c
 // Frees the result of `ds_ll_singly_find_all()`.
 static inline void ds_ll_singly_free_array(DS_LL_SinglyArray *result);
 // Takes a singly linked list and a pointer to one of its nodes and removes the node from the list, returning the size of the list after the operation.
-static inline size_t ds_ll_singly_remove_node(DS_LL_SinglyList **list, DS_LL_SinglyNode *node);
+static inline size_t ds_ll_singly_remove_node(DS_LL_SinglyList *list, DS_LL_SinglyNode *node);
 // Takes a singly linked list and a string and removes the first node that contains the string from the list, returning the size of the list after the operation.
-static inline size_t ds_ll_singly_remove_first(DS_LL_SinglyList **list, char *data);
+static inline size_t ds_ll_singly_remove_first(DS_LL_SinglyList *list, char *data);
 // Takes a singly linked list and a string and removes all nodes that contains the string from the list, returning the size of the list after the operation.
-static inline size_t ds_ll_singly_remove_all(DS_LL_SinglyList **list, char *data);
+static inline size_t ds_ll_singly_remove_all(DS_LL_SinglyList *list, char *data);
 // Takes a singly linked list and a separator string and returns a single string containing all the data in the list.
 static inline char *ds_ll_singly_join(DS_LL_SinglyList *list, char *separator);
 // Prints the contents of the list.
@@ -110,15 +110,19 @@ static inline size_t ds_ll_singly_free(DS_LL_SinglyList *list) {
 }
 
 static inline size_t ds_ll_singly_get_size(DS_LL_SinglyList *list) {
+    if (list == NULL)
+        return 0;
     return list->size;
 }
 
 static inline DS_LL_SinglyNode *ds_ll_singly_get_head(DS_LL_SinglyList *list) {
+    if (list == NULL)
+        return NULL;
     return list->head;
 }
 
 static inline DS_LL_SinglyNode *ds_ll_singly_get_tail(DS_LL_SinglyList *list) {
-    if (list->head == NULL)
+    if (list == NULL || list->head == NULL)
         return NULL;
 
     DS_LL_SinglyNode *p = list->head;
@@ -141,39 +145,46 @@ static DS_LL_SinglyNode *create_singly_node(char *data) {
     return node;
 }
 
-static inline size_t ds_ll_singly_insert_front(DS_LL_SinglyList **list, char *data) {
-    DS_LL_SinglyList *p = *list;
+static inline size_t ds_ll_singly_insert_front(DS_LL_SinglyList *list, char *data) {
+    if (list == NULL)
+        return 0;
+
     DS_LL_SinglyNode *new_head = create_singly_node(data);
 
     if (new_head == NULL)
-        return p->size;
+        return list->size;
 
-    new_head->next = p->head;
-    p->head = new_head;
-    p->size++;
-    return p->size;
+    new_head->next = list->head;
+    list->head = new_head;
+    list->size++;
+    return list->size;
 }
 
-static inline size_t ds_ll_singly_append(DS_LL_SinglyList **list, char *data) {
-    DS_LL_SinglyList *lp = *list;
+static inline size_t ds_ll_singly_append(DS_LL_SinglyList *list, char *data) {
+    if (list == NULL)
+        return 0;
+
     DS_LL_SinglyNode *node = create_singly_node(data);
 
     if (node == NULL)
-        return lp->size;
+        return list->size;
 
-    DS_LL_SinglyNode *p = ds_ll_singly_get_tail(lp);
+    DS_LL_SinglyNode *p = ds_ll_singly_get_tail(list);
 
     if (p == NULL) {
         // empty list
-        lp->head = node;
+        list->head = node;
     } else {
         p->next = node;
     }
-    lp->size++;
-    return lp->size;
+    list->size++;
+    return list->size;
 }
 
 static inline size_t ds_ll_singly_find_node(DS_LL_SinglyList *list, DS_LL_SinglyNode *node) {
+    if (list == NULL)
+        return 0;
+
     DS_LL_SinglyNode *p;
     size_t pos = 0;
 
@@ -187,7 +198,7 @@ static inline size_t ds_ll_singly_find_node(DS_LL_SinglyList *list, DS_LL_Singly
 }
 
 static inline DS_LL_SinglyNode *ds_ll_singly_find_first(DS_LL_SinglyList *list, char *data) {
-    if (data == NULL)
+    if (list == NULL || data == NULL)
         return NULL;
 
     DS_LL_SinglyNode *p = list->head;
@@ -200,7 +211,7 @@ static inline DS_LL_SinglyNode *ds_ll_singly_find_first(DS_LL_SinglyList *list, 
 }
 
 static inline DS_LL_SinglyArray *ds_ll_singly_find_all(DS_LL_SinglyList *list, char *data) {
-    if (data == NULL)
+    if (list == NULL || data == NULL)
         return NULL;
 
     DS_LL_SinglyNode *p = list->head;
@@ -242,9 +253,11 @@ static inline void ds_ll_singly_free_array(DS_LL_SinglyArray *array) {
     free(array);
 }
 
-static inline size_t ds_ll_singly_remove_node(DS_LL_SinglyList **list, DS_LL_SinglyNode *node) {
-    DS_LL_SinglyList *ls = *list;
-    DS_LL_SinglyNode *cur = ls->head;
+static inline size_t ds_ll_singly_remove_node(DS_LL_SinglyList *list, DS_LL_SinglyNode *node) {
+    if (list == NULL)
+        return 0;
+
+    DS_LL_SinglyNode *cur = list->head;
     DS_LL_SinglyNode *prev = NULL;
 
     while (cur != NULL) {
@@ -254,41 +267,44 @@ static inline size_t ds_ll_singly_remove_node(DS_LL_SinglyList **list, DS_LL_Sin
             if (prev != NULL) {
                 prev->next = next;
             } else {
-                ls->head = next;
+                list->head = next;
             }
             free(cur->data);
             free(cur);
 
-            ls->size--;
-            return ls->size;
+            list->size--;
+            return list->size;
         }
         prev = cur;
         cur = cur->next;
     }
-    return ls->size;
+    return list->size;
 }
 
-static inline size_t ds_ll_singly_remove_first(DS_LL_SinglyList **list, char *data) {
-    DS_LL_SinglyList *ls = *list;
+static inline size_t ds_ll_singly_remove_first(DS_LL_SinglyList *list, char *data) {
+    if (list == NULL)
+        return 0;
 
     if (data == NULL)
-        return ls->size;
+        return list->size;
 
     // This is just for learning, so I'll reuse the existing functions...
-    DS_LL_SinglyNode *p = ds_ll_singly_find_first(ls, data);
+    DS_LL_SinglyNode *p = ds_ll_singly_find_first(list, data);
     if (p == NULL)
-        return ls->size;
+        return list->size;
 
-    return ds_ll_singly_remove_node(&ls, p);
+    return ds_ll_singly_remove_node(list, p);
 }
 
-static inline size_t ds_ll_singly_remove_all(DS_LL_SinglyList **list, char *data) {
-    DS_LL_SinglyList *ls = *list;
-    DS_LL_SinglyNode *cur = ls->head;
-    DS_LL_SinglyNode *prev = NULL;
+static inline size_t ds_ll_singly_remove_all(DS_LL_SinglyList *list, char *data) {
+    if (list == NULL)
+        return 0;
 
     if (data == NULL)
-        return ls->size;
+        return list->size;
+
+    DS_LL_SinglyNode *cur = list->head;
+    DS_LL_SinglyNode *prev = NULL;
 
     while (cur != NULL) {
         if (strcmp(cur->data, data) == 0) {
@@ -297,12 +313,12 @@ static inline size_t ds_ll_singly_remove_all(DS_LL_SinglyList **list, char *data
             if (prev != NULL) {
                 prev->next = next;
             } else {
-                ls->head = next;
+                list->head = next;
             }
             free(cur->data);
             free(cur);
 
-            ls->size--;
+            list->size--;
 
             cur = next;
         } else {
@@ -310,10 +326,13 @@ static inline size_t ds_ll_singly_remove_all(DS_LL_SinglyList **list, char *data
             cur = cur->next;
         }
     }
-    return ls->size;
+    return list->size;
 }
 
 static inline char *ds_ll_singly_join(DS_LL_SinglyList *list, char *separator) {
+    if (list == NULL || separator == NULL)
+        return NULL;
+
     DS_LL_SinglyNode *p;
     DS_SB_StringBuffer *sb = ds_sb_create();
     if (sb == NULL)

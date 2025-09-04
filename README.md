@@ -1,13 +1,13 @@
 > [!WARNING]
-> I wrote this code exclusively for learning purposes. The implementations are simplified and inconsistent.
+> I wrote this code exclusively for learning purposes. The implementations are very simplified.
 
 - [X] Dynamic array;
 - [X] Linked Lists:
     - [X] Singly;
     - [X] Doubly;
-- [ ] Queue:
-    - [ ] Standard;
-    - [ ] Deque;
+- [X] Queue:
+    - [X] Standard;
+    - [X] Deque;
 - [ ] Stack;
 - [ ] Hash table;
 - [ ] Trees:
