@@ -8,14 +8,15 @@ extern "C" {
 #endif
 
 typedef struct DS_LL_DoublyNode DS_LL_DoublyNode;
-typedef struct DS_LL_DoublyList DS_LL_DoublyList;
 typedef struct DS_LL_DoublyArray DS_LL_DoublyArray;
-static inline DS_LL_DoublyList *ds_ll_doubly_create();
-static inline size_t ds_ll_doubly_free(DS_LL_DoublyList *list);
-static inline size_t ds_ll_doubly_insert_front(DS_LL_DoublyList *list, char *data);
-static inline size_t ds_ll_doubly_append(DS_LL_DoublyList *list, char *data);
-static inline void ds_ll_doubly_print(DS_LL_DoublyList *list);
-static inline size_t ds_ll_doubly_remove(DS_LL_DoublyList *list, DS_LL_DoublyNode *node);
+static inline DS_LL_DoublyNode *ds_ll_doubly_create_node(char *data);
+static inline size_t ds_ll_doubly_free(DS_LL_DoublyNode *head);
+static inline size_t ds_ll_doubly_get_size(DS_LL_DoublyNode *head);
+static inline DS_LL_DoublyNode *ds_ll_doubly_get_tail(DS_LL_DoublyNode *head);
+static inline DS_LL_DoublyNode *ds_ll_doubly_insert_front(DS_LL_DoublyNode **head, char *data);
+static inline DS_LL_DoublyNode *ds_ll_doubly_append(DS_LL_DoublyNode *head, char *data);
+static inline void ds_ll_doubly_print(DS_LL_DoublyNode *head);
+static inline void ds_ll_doubly_remove(DS_LL_DoublyNode **head, DS_LL_DoublyNode *node);
 
 #ifdef __cplusplus
 }
@@ -32,29 +33,23 @@ struct DS_LL_DoublyNode {
     DS_LL_DoublyNode *prev;
 };
 
-struct DS_LL_DoublyList {
-    DS_LL_DoublyNode *head;
-    DS_LL_DoublyNode *tail;
-    size_t size;
-};
-
-static inline DS_LL_DoublyList *ds_ll_doubly_create() {
-    DS_LL_DoublyList *p = (DS_LL_DoublyList *)malloc(sizeof(DS_LL_DoublyList));
-    if (p == NULL)
-        return NULL;
-
-    p->head = NULL;
-    p->tail = NULL;
-    p->size = 0;
+static inline DS_LL_DoublyNode *ds_ll_doubly_create_node(char *data) {
+    DS_LL_DoublyNode *p = (DS_LL_DoublyNode *)malloc(sizeof(DS_LL_DoublyNode));
+    p->data = NULL;
+    if (data != NULL)
+        p->data = strdup(data);
+    p->next = NULL;
+    p->prev = NULL;
     return p;
 }
 
-static inline size_t ds_ll_doubly_free(DS_LL_DoublyList *list) {
-    if (list == NULL)
+static inline size_t ds_ll_doubly_free(DS_LL_DoublyNode *head) {
+    if (head == NULL)
         return 0;
 
-    DS_LL_DoublyNode *p = list->head, *tmp;
+    DS_LL_DoublyNode *p = head, *tmp;
     size_t i = 0;
+
     while (p != NULL) {
         tmp = p->next;
 
@@ -64,107 +59,107 @@ static inline size_t ds_ll_doubly_free(DS_LL_DoublyList *list) {
 
         i++;
     }
-    free(list);
 
     return i;
 }
 
-static inline size_t ds_ll_doubly_insert_front(DS_LL_DoublyList *list, char *data) {
-    if (list == NULL)
-        return 0;
-
-    if (data == NULL)
-        return list->size;
-
-    DS_LL_DoublyNode *p = (DS_LL_DoublyNode *)malloc(sizeof(DS_LL_DoublyNode));
-    if (p == NULL)
-        return list->size;
-
-    p->data = strdup(data);
-
-    if (list->head == NULL) {
-        p->next = NULL;
-        p->prev = NULL;
-        list->head = p;
-        list->tail = list->head;
-        list->size++;
-    } else {
-        p->next = list->head;
-        p->prev = NULL;
-        list->head->prev = p;
-        list->head = p;
-        list->size++;
+static inline size_t ds_ll_doubly_get_size(DS_LL_DoublyNode *head) {
+    size_t i = 0;
+    while (head != NULL && head->data != NULL) {
+        head = head->next;
+        i++;
     }
-    return list->size;
+    return i;
 }
 
-static inline size_t ds_ll_doubly_append(DS_LL_DoublyList *list, char *data) {
-    if (list == NULL)
-        return 0;
+static inline DS_LL_DoublyNode *ds_ll_doubly_get_tail(DS_LL_DoublyNode *head) {
+    if (head == NULL)
+        return NULL;
 
-    if (data == NULL)
-        return list->size;
-
-    DS_LL_DoublyNode *p = (DS_LL_DoublyNode *)malloc(sizeof(DS_LL_DoublyNode));
-    if (p == NULL)
-        return list->size;
-
-    p->data = strdup(data);
-
-    if (list->head == NULL) {
-        p->next = NULL;
-        p->prev = NULL;
-        list->head = p;
-        list->tail = list->head;
-        list->size++;
-    } else {
-        p->next = NULL;
-        p->prev = list->tail;
-        list->tail->next = p;
-        list->tail = p;
-        list->size++;
+    DS_LL_DoublyNode *tail = head;
+    while (tail->next != NULL) {
+        tail = tail->next;
     }
-    return list->size;
+    return tail;
 }
 
-static inline void ds_ll_doubly_print(DS_LL_DoublyList *list) {
-    if (list == NULL)
-        return;
+static inline DS_LL_DoublyNode *ds_ll_doubly_insert_front(DS_LL_DoublyNode **head, char *data) {
+    DS_LL_DoublyNode *hp = *head, *p;
 
-    DS_LL_DoublyNode *p = list->head;
+    if (hp->data == NULL) {
+        hp->data = strdup(data);
+        p = hp;
+    } else {
+        p = ds_ll_doubly_create_node(data);
+        if (p == NULL)
+            return NULL;
 
-    while (p != NULL) {
-        if (p == list->head)
-            printf("NULL <- ");
+        p->next = *head;
+        p->prev = NULL;
+        hp->prev = p;
+        *head = p;
+    }
 
-        printf("%s %s-> ", p->data, p != list->tail ? "<" : "");
+    return p;
+}
 
-        p = p->next;
+static inline DS_LL_DoublyNode *ds_ll_doubly_append(DS_LL_DoublyNode *head, char *data) {
+    DS_LL_DoublyNode *p;
+
+    if (head->data == NULL) {
+        head->data = strdup(data);
+        p = head;
+    } else {
+        p = ds_ll_doubly_create_node(data);
+        if (p == NULL)
+            return NULL;
+
+        p->next = NULL;
+        DS_LL_DoublyNode *tail = ds_ll_doubly_get_tail(head);
+        p->prev = tail;
+        tail->next = p;
+    }
+
+    return p;
+}
+
+static inline void ds_ll_doubly_print(DS_LL_DoublyNode *head) {
+    printf("NULL <- ");
+    while (head != NULL) {
+        printf("%s %s-> ", head->data ? head->data : "(null)", head->next != NULL ? "<" : "");
+        head = head->next;
     }
     printf("NULL\n");
 }
 
-static inline size_t ds_ll_doubly_remove(DS_LL_DoublyList *list, DS_LL_DoublyNode *node) {
-    if (list == NULL)
-        return 0;
-
+static inline void ds_ll_doubly_remove(DS_LL_DoublyNode **head, DS_LL_DoublyNode *node) {
     if (node == NULL)
-        return list->size;
+        return;
 
-    if (node == list->head) {
-        list->head = list->head->next;
-        list->head->prev = NULL;
-    } else if (node == list->tail) {
-        list->tail = list->tail->prev;
-        list->tail->next = NULL;
+    DS_LL_DoublyNode *p = *head, *tail = ds_ll_doubly_get_tail(p);
+
+    if (node == p) {
+        if (p->next != NULL) {
+            *head = p->next;
+            p->prev = NULL;
+        } else {
+            p->data = NULL;
+            return;
+        }
+    } else if (node == tail) {
+        if (tail->prev != NULL) {
+            tail = tail->prev;
+            tail->next = NULL;
+        } else {
+            tail->data = NULL;
+            return;
+        }
     } else {
         node->prev->next = node->next;
         node->next->prev = node->prev;
     }
-
     free(node->data);
     free(node);
-    return --list->size;
 }
 
 #endif // DS_LL_DOUBLY_IMPLEMENTATION
