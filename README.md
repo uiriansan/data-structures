@@ -1,5 +1,5 @@
 > [!WARNING]
-> I wrote this code exclusively for learning purposes. The implementations are very simplified.
+> I wrote this code exclusively for learning purposes. The implementations are very simplified and generic.
 
 - [X] Dynamic array;
 - [X] Linked Lists:

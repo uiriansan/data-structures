@@ -143,6 +143,7 @@ static inline void ds_ll_doubly_remove(DS_LL_DoublyNode **head, DS_LL_DoublyNode
             *head = p->next;
             p->prev = NULL;
         } else {
+            free(node->data);
             p->data = NULL;
             return;
         }
@@ -151,14 +152,15 @@ static inline void ds_ll_doubly_remove(DS_LL_DoublyNode **head, DS_LL_DoublyNode
             tail = tail->prev;
             tail->next = NULL;
         } else {
+            free(node->data);
             tail->data = NULL;
             return;
         }
     } else {
         node->prev->next = node->next;
         node->next->prev = node->prev;
+        free(node->data);
     }
-    free(node->data);
     free(node);
 }
 

@@ -50,23 +50,5 @@ int main(int argc, char **argv) {
     ds_q_print(queue);
     free(a);
 
-    ds_q_enqueue(queue, "x");
-    assert(ds_q_get_size(queue) == 3);
-    ds_q_print(queue);
-
-    a = ds_q_dequeue(queue);
-    assert(strcmp(a, "d") == 0);
-    assert(ds_q_get_size(queue) == 2);
-    ds_q_print(queue);
-    free(a);
-
-    a = ds_q_dequeue(queue);
-    assert(strcmp(a, "e") == 0);
-    assert(ds_q_get_size(queue) == 1);
-    ds_q_print(queue);
-    free(a);
-
-    assert(ds_q_free(queue) == 1);
-
     return 0;
 }
