@@ -60,6 +60,10 @@ int main(int argc, char **argv) {
     ds_q_print(queue);
     free(a);
 
+    a = ds_q_peek(queue);
+    assert(strcmp(a, "e") == 0);
+    free(a);
+
     a = ds_q_dequeue(queue);
     assert(strcmp(a, "e") == 0);
     assert(ds_q_get_size(queue) == 1);

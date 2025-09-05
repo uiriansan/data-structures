@@ -9,13 +9,25 @@
 extern "C" {
 #endif
 
+// A queue is a FIFO data structure (First In, First Out).
+// New elements are added to the end of the list and the old elements are removed from the front.
 typedef struct DS_Queue DS_Queue;
+// Create a queue.
 static inline DS_Queue *ds_q_create();
+// Free a queue and all its data.
 static inline size_t ds_q_free(DS_Queue *queue);
+// Add an element to the end of the queue.
 static inline void ds_q_enqueue(DS_Queue *queue, char *data);
+// Get the size of a queue's internal list (not the same as queue->size).
 static inline size_t ds_q_get_size(DS_Queue *queue);
+// Get the data of the element at the front of the queue and remove it from the list.
+// This operation returns a `char *` that must be manually freed using `free()`.
 static inline char *ds_q_dequeue(DS_Queue *queue);
-static inline char *peek(DS_Queue *queue);
+// Get the data of the element at the front of the queue without removing it from the list.
+// This operation returns a `char *` that must be manually freed using `free()`.
+static inline char *ds_q_peek(DS_Queue *queue);
+// Print the queue.
+static inline void ds_q_print(DS_Queue *queue);
 
 #ifdef __cplusplus
 }
@@ -90,6 +102,15 @@ static inline char *ds_q_dequeue(DS_Queue *queue) {
     }
     queue->size--;
 
+    return data;
+}
+
+static inline char *ds_q_peek(DS_Queue *queue) {
+    if (queue == NULL || queue->head->data == NULL)
+        return NULL;
+
+    char *data = (char *)malloc(strlen(queue->head->data));
+    strcpy(data, queue->head->data);
     return data;
 }
 
