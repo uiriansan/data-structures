@@ -8,7 +8,7 @@
 - [X] Queue:
     - [X] Standard;
     - [X] Deque;
-- [ ] Stack;
+- [X] Stack;
 - [ ] Hash table;
 - [ ] Trees:
     - [ ] Binary;
